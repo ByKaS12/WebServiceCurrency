@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebServiceCurrency.Models;
+using Newtonsoft.Json;
+
 namespace WebServiceCurrency.Controllers
 {
     [ApiController]
@@ -18,10 +20,10 @@ namespace WebServiceCurrency.Controllers
         }
         
         [HttpGet("currencies")]
-        public Response? GetCurrencies() => new Response(url);
+        public string? GetCurrencies() => JsonConvert.SerializeObject(new Response(url),Formatting.Indented);
 
         [HttpGet("currency/{id}")]
-        public Response? GetCurrency(string id)=> new Response(url).GetValute(id);
+        public string? GetCurrency(string id)=> JsonConvert.SerializeObject(new Response(url).GetValute(id), Formatting.Indented);
 
     }
 }
