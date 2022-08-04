@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>sgs.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,10 @@
     <Content Remove="Views\**" />
     <EmbeddedResource Remove="Views\**" />
     <None Remove="Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="sgs.ico" />
   </ItemGroup>
 
   <ItemGroup>
