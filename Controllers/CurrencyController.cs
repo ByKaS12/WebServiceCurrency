@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-
+using WebServiceCurrency.Models;
 namespace WebServiceCurrency.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class CurrencyController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        string url = "https://www.cbr-xml-daily.ru/daily_json.js";
+
+
 
         private readonly ILogger<CurrencyController> _logger;
 
@@ -17,17 +16,12 @@ namespace WebServiceCurrency.Controllers
         {
             _logger = logger;
         }
+        
+        [HttpGet("currencies")]
+        public Response? GetCurrencies() => new Response(url);
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
-        {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }
+        [HttpGet("currency/{id}")]
+        public Response? GetCurrency(string id)=> new Response(url).GetValute(id);
+
     }
 }
