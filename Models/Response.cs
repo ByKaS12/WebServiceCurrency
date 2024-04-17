@@ -4,45 +4,30 @@ namespace WebServiceCurrency.Models
 {
     public class Response
     {
-        public DateTime Timestamp { get; set; }
-        public List<Valute>? Сurrencies { get; set; }
+        public string Timestamp { get; set; } = DateTime.Now.Date.ToShortDateString();
+        public Valute valute { get; set; }
         public Response()
         {
 
         }
-        public Response(string address)
+        public Response(string address, string country)
         {
-            Сurrencies = new List<Valute>();
+            valute = new Valute();
             GetRequest request = new(address);
             request.Run();
             var response = request.Response;
             if (response != null)
             {
-                var Json = JObject.Parse(response);
-                var time = Json["Timestamp"];
-                Timestamp = Convert.ToDateTime(time);
-                var valutes = Json["Valute"];
-                int i = 0;
-                foreach (var valute in valutes)
-                {
-
-                    var obj = valute.ToList().First();
-                    Сurrencies.Add(new Valute()
-                    {
-                        Id = (string)obj["ID"],
-                        NumCode = (string)obj["NumCode"],
-                        CharCode = (string)obj["CharCode"],
-                        Nominal = (int)obj["Nominal"],
-                        Name = (string)obj["Name"],
-                        Value = (double)obj["Value"],
-                        PreviousValue = (double)obj["Previous"],
-
-                    });
-                    i++;
-                }
+                //var Col = response.Split('\n').First(x => x.Contains("Country")).Split("|");
+                var row = response.Split('\n').First(x => x.Contains($"{country}")).Split("|");
+                valute.Country = row[0];
+                valute.Currency = row[1];
+                valute.Amount = row[2];
+                valute.Code = row[3];
+                valute.Rate = Convert.ToDouble(row[4].Replace('.',','));
             }
         }
-        public Response? GetValute(string id) => new Response() { Timestamp = this.Timestamp, Сurrencies = new List<Valute>() { this.Сurrencies.FirstOrDefault(u=> u.Id == id)} }; 
+        //public Response? GetValute(string id) => new Response() { Timestamp = this.Timestamp, Сurrencies = new List<Valute>() { this.Сurrencies.FirstOrDefault(u=> u.Id == id)} }; 
 
 
     }
