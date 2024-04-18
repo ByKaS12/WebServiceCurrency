@@ -15,7 +15,7 @@ namespace WebServiceCurrency.Controllers
 
         public DateTime date = DateTime.Today.Date;
         public string url = string.Empty;
-        public string country = string.Empty;
+        public string country = "Japan";
         private readonly ILogger<CurrencyController> _logger;
 
         public CurrencyController(ILogger<CurrencyController> logger)
