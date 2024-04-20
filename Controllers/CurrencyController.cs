@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebServiceCurrency.Models;
 using Newtonsoft.Json;
+using WebServiceCurrency.Classes;
 
 
 namespace WebServiceCurrency.Controllers
@@ -13,16 +14,18 @@ namespace WebServiceCurrency.Controllers
 
 
 
-        private readonly ApplicationContext contex;
+        private readonly ApplicationContext context;
         public DateTime date = DateTime.Today.Date;
         public string url = string.Empty;
         public string country = "Japan";
+        public string codes = "JPY|IDR|PHP";
+        public string startDate = string.Empty;
+        public string endDate = string.Empty;
         private readonly ILogger<CurrencyController> _logger;
 
-        public CurrencyController(ILogger<CurrencyController> logger, ApplicationContext Context)
+        public CurrencyController(ILogger<CurrencyController> logger)
         {
             _logger = logger;
-            contex = Context;
              url = $"https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/daily.txt?date={date}";
             
     }
@@ -31,14 +34,20 @@ namespace WebServiceCurrency.Controllers
         public string? GetCurrencies(string country) => JsonConvert.SerializeObject(new Response().AddParam(url, country), Formatting.Indented);
         [HttpGet("Sync")]
         public void Sync() {
-            
 
+            var obj = new Response().AddParam(url, country);
+            new CRUD().CreateOrChange(obj);
 
         }
-            
+        [HttpGet("SyncRange")]
+        public void SyncRange(string year,string codes,string startDate,string endDate)
+        {
 
-        //[HttpGet("currency/{date}")]
-        //public string? GetCurrency(string date)=> JsonConvert.SerializeObject(new Response(url).GetValute(date), Formatting.Indented);
+            var obj = new Response().SyncRange($"https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/year.txt?year={year}", codes, startDate,endDate);
+            new CRUD().CreateDateRange(obj,Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
 
+        }
+        [HttpGet("JsonAnswer")]
+        public string? JsonAnswer(string codes, string startDate, string endDate) => JsonConvert.SerializeObject(new CRUD().Answers(codes, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate)), Formatting.Indented);
     }
 }
