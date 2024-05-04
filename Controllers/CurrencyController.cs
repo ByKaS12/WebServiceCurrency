@@ -42,9 +42,20 @@ namespace WebServiceCurrency.Controllers
         [HttpGet("SyncRange")]
         public void SyncRange(string year,string codes,string startDate,string endDate)
         {
+            DateTime sdate = Convert.ToDateTime(startDate);
+            DateTime edate = Convert.ToDateTime(endDate);
+            var raz = edate.Year - sdate.Year;
+            List<int> years = new List<int>();
+            for (int i = 0; i < raz+1; i++)
+            {
+                years.Add(sdate.Year+i);
+            }
+            foreach (var item in years)
+            {
+                var obj = new Response().SyncRange($"https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/year.txt?year={item}", codes, startDate, endDate);
+                new CRUD().CreateDateRange(obj, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
+            }
 
-            var obj = new Response().SyncRange($"https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/year.txt?year={year}", codes, startDate,endDate);
-            new CRUD().CreateDateRange(obj,Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
 
         }
         [HttpGet("JsonAnswer")]
